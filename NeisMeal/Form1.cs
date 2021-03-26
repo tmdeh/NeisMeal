@@ -10,6 +10,9 @@ using System.Windows.Forms;
 using System.Net;
 using System.IO;
 using Newtonsoft.Json;
+using System.Net.NetworkInformation;
+
+
 
 namespace NeisMeal
 {
@@ -22,26 +25,77 @@ namespace NeisMeal
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            bool connected = NetworkInterface.GetIsNetworkAvailable();
             //json 값을 웹에서 받아오기
+            string today = System.DateTime.Now.ToString("yyyyMMdd");
             WebClient webClient = new WebClient();
             webClient.Headers["Contents-Type"] = "application/json";
             webClient.Encoding = Encoding.UTF8;
 
-            Stream stream = webClient.OpenRead("https://open.neis.go.kr/hub/mealServiceDietInfo?Type=json&ATPT_OFCDC_SC_CODE=D10&SD_SCHUL_CODE=7240454&MLSV_YMD=20210323");
+            try
+            {
+                string neis = "https://open.neis.go.kr/hub/mealServiceDietInfo?Type=json&ATPT_OFCDC_SC_CODE=D10&SD_SCHUL_CODE=7240454&MLSV_YMD=";
+                neis += today;
+                Stream stream = webClient.OpenRead(neis);
 
-            Root root = new Root();
-            StreamReader reader = new StreamReader(stream);
-            root = JsonConvert.DeserializeObject<Root>(reader.ReadToEnd());
-            textBox1.Text = root.mealServiceDietInfo[1].row[0].DDISH_NM.Replace("<br/>", "\r\n");
-            textBox2.Text = root.mealServiceDietInfo[1].row[1].DDISH_NM.Replace("<br/>", "\r\n");
-            textBox3.Text = root.mealServiceDietInfo[1].row[2].DDISH_NM.Replace("<br/>", "\r\n");
-            //textBox1.Text = reader.ReadToEnd();
-
-
+                Root root = new Root();
+                StreamReader reader = new StreamReader(stream);
+                root = JsonConvert.DeserializeObject<Root>(reader.ReadToEnd());
+                textBox1.TextAlign = HorizontalAlignment.Center;
+                textBox2.TextAlign = HorizontalAlignment.Center;
+                textBox3.TextAlign = HorizontalAlignment.Center;
+                textBox4.TextAlign = HorizontalAlignment.Center;
+                textBox5.TextAlign = HorizontalAlignment.Center;
+                textBox6.TextAlign = HorizontalAlignment.Center;
+                BackColor = Color.Azure;
+                textBox1.BackColor = Color.AliceBlue;
+                textBox2.BackColor = Color.AliceBlue;
+                textBox3.BackColor = Color.AliceBlue;
+                textBox4.BackColor = Color.AliceBlue;
+                textBox5.BackColor = Color.AliceBlue;
+                textBox6.BackColor = Color.AliceBlue;
+                textBox4.Text = "저녁";
+                textBox5.Text = "점심";
+                textBox6.Text = "아침";
+                try
+                {
+                    textBox1.Text = root.mealServiceDietInfo[1].row[0].DDISH_NM.Replace("<br/>", "\r\n");
+                    textBox2.Text = root.mealServiceDietInfo[1].row[1].DDISH_NM.Replace("<br/>", "\r\n");
+                    textBox3.Text = root.mealServiceDietInfo[1].row[2].DDISH_NM.Replace("<br/>", "\r\n");
+                }
+                catch
+                {
+                    textBox1.Text = root.mealServiceDietInfo[1].row[0].DDISH_NM.Replace("<br/>", "\r\n");
+                    textBox2.Text = root.mealServiceDietInfo[1].row[1].DDISH_NM.Replace("<br/>", "\r\n");
+                }
+            }
+                //textBox1.Text = reader.ReadToEnd();
+            catch(System.Net.WebException)
+            {
+                MessageBox.Show("인터넷 연결을 확인해 주세요.");
+                textBox1.Text = "연결 안됨";
+                textBox2.Text = "연결 안됨";
+                textBox3.Text = "연결 안됨";
+            }
 
         }
 
         private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox4_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
         }
